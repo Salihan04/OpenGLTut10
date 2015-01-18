@@ -80,6 +80,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Main_Colors.cpp" />
     <ClCompile Include="Shader.cpp" />
   </ItemGroup>
