@@ -8,21 +8,14 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
+#include "Main_Colors.h"
 #include "Shader.h"
 #include "Camera.h"
 
 using namespace std;
 using namespace glm;
 
-//Function prototypes
-void createCubeVertexBuffer();
-void renderScene();
-void key_callback(GLFWwindow* window, int key, int scancode, int action, int mode);
-void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
-void mouse_callback(GLFWwindow* window, double xpos, double ypos);
-void Do_Movement();
-
-GLuint cubeVertexBuffer, lightVAO;
+GLuint cubeVertexBuffer;
 
 //Object properties
 vec3 lightPos(1.2f, 1.0f, 2.0f);
@@ -42,13 +35,15 @@ GLuint screenWidth = 700, screenHeight = 500;
 //Pointers to Shader objects;
 Shader *cubeShaderPtr, *lampShaderPtr;
 
-int main(int argc, char **argv) {
+int main(int argc, char **argv) 
+{
 	//initialise GLFW
 	if (!glfwInit()) {
 		fprintf(stderr, "Failed to initialise GLFW\n");
 		return -1;
 	}
 
+	//Creating window
 	glfwWindowHint(GLFW_SAMPLES, 4);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 2);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);
@@ -64,12 +59,12 @@ int main(int argc, char **argv) {
 	glfwMakeContextCurrent(window);
 	glfwSetWindowPos(window, 400, 200);
 
-	// Set the required callback functions
+	//Set the required callback functions
 	glfwSetKeyCallback(window, key_callback);
 	glfwSetCursorPosCallback(window, mouse_callback);
 	glfwSetScrollCallback(window, scroll_callback);
 
-	// Options
+	//Options
 	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
 	//initialize GLEW
@@ -116,7 +111,9 @@ int main(int argc, char **argv) {
 	return 0;
 }
 
-void createCubeVertexBuffer() {
+//Method to initialise cube vertices and bind to buffer
+void createCubeVertexBuffer() 
+{
 	GLfloat vertices[] = {
 		-0.5f, -0.5f, -0.5f,
 		0.5f, -0.5f, -0.5f,
@@ -166,7 +163,8 @@ void createCubeVertexBuffer() {
 	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 }
 
-void renderScene() {
+void renderScene() 
+{
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	/////CUBE OBJECT/////
@@ -225,7 +223,7 @@ void renderScene() {
 	glDisableVertexAttribArray(0);
 }
 
-// Moves/alters the camera positions based on user input
+//Moves/alters the camera positions based on user input
 void Do_Movement()
 {
 	// Camera controls
@@ -239,7 +237,7 @@ void Do_Movement()
 		camera.ProcessKeyboard(RIGHT, deltaTime);
 }
 
-// Is called whenever a key is pressed/released via GLFW
+//Is called whenever a key is pressed/released via GLFW
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mode)
 {
 	if (action == GLFW_PRESS)
