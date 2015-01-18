@@ -169,6 +169,7 @@ void createCubeVertexBuffer() {
 void renderScene() {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+	/////CUBE OBJECT/////
 	//use the cube shader
 	cubeShaderPtr->Use();
 
@@ -176,19 +177,20 @@ void renderScene() {
 	GLint objectColorLoc = glGetUniformLocation(cubeShaderPtr->Program, "objectColor");
 	glUniform3f(objectColorLoc, 1.0f, 0.5f, 0.31f);
 
-	// Create camera transformations
+	//Create camera transformations
 	mat4 view;
 	view = camera.GetViewMatrix();
 	mat4 projection;
 	projection = perspective(camera.Zoom, 700.0f / 500.0f, 0.1f, 1000.0f);
-	// Get the uniform locations
+	//Get the uniform locations
 	GLint modelLoc = glGetUniformLocation(cubeShaderPtr->Program, "model");
 	GLint viewLoc = glGetUniformLocation(cubeShaderPtr->Program, "view");
 	GLint projLoc = glGetUniformLocation(cubeShaderPtr->Program, "projection");
-	// Pass the matrices to the shader
+	//Pass the matrices to the shader
 	glUniformMatrix4fv(viewLoc, 1, GL_FALSE, value_ptr(view));
 	glUniformMatrix4fv(projLoc, 1, GL_FALSE, value_ptr(projection));
 
+	//draw the cube
 	glEnableVertexAttribArray(0);
 	glBindBuffer(GL_ARRAY_BUFFER, cubeVertexBuffer);
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
@@ -196,34 +198,28 @@ void renderScene() {
 	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, value_ptr(model));
 	glDrawArrays(GL_TRIANGLES, 0, 36);
 
-	//lamp oject
-	glGenVertexArrays(1, &lightVAO);
-	glBindVertexArray(lightVAO);
-	// We only need to bind to our VBO, the VBO's data is already what we want.
-	glBindBuffer(GL_ARRAY_BUFFER, cubeVertexBuffer);
-	// Set our vertex attributes (only position data for our lamp)
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (GLvoid*)0);
-	glEnableVertexAttribArray(0);
-	glBindVertexArray(0);
-
+	/////LAMP OBJECT/////
 	//use the shader for the lamp
 	lampShaderPtr->Use();
 
-	// Get location objects for the matrices on our lamp shader (these could be different on a different shader)
+	//Get location objects for the matrices on our lamp shader 
+	//(these could be different on a different shader)
 	modelLoc = glGetUniformLocation(lampShaderPtr->Program, "model");
 	viewLoc = glGetUniformLocation(lampShaderPtr->Program, "view");
 	projLoc = glGetUniformLocation(lampShaderPtr->Program, "projection");
-	// Set matrices
+	//Set matrices
 	glUniformMatrix4fv(viewLoc, 1, GL_FALSE, value_ptr(view));
 	glUniformMatrix4fv(projLoc, 1, GL_FALSE, value_ptr(projection));
+	
+	//draw lamp
+	glEnableVertexAttribArray(0);
+	glBindBuffer(GL_ARRAY_BUFFER, cubeVertexBuffer);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
 	model = mat4();
 	model = translate(model, lightPos);
 	model = scale(model, vec3(0.2f)); // Make it a smaller cube
 	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, value_ptr(model));
-	// Draw our light object (using light's vertex attributes)
-	glBindVertexArray(lightVAO);
 	glDrawArrays(GL_TRIANGLES, 0, 36);
-	glBindVertexArray(0);
 
 	//Disable vertex atrributes
 	glDisableVertexAttribArray(0);
