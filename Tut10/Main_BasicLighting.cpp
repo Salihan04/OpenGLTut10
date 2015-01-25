@@ -221,6 +221,9 @@ void renderScene()
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+	//Change the light's position values over time
+	lightPos.x = 1.0f + sin(glfwGetTime()) * 2.0f;
+	lightPos.y = sin(glfwGetTime() / 2.0f) * 1.0f;
 
 	/////CUBE OBJECT/////
 	//use the cube shader
