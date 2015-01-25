@@ -8,7 +8,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
-#include "Main_Colors.h"
+#include "Main_BasicLighting.h"
 #include "Shader.h"
 #include "Camera.h"
 
@@ -16,6 +16,7 @@ using namespace std;
 using namespace glm;
 
 GLuint cubeVertexPositionBuffer;
+GLuint cubeVertexNormalBuffer;
 
 //Object properties
 vec3 lightPos(1.2f, 1.0f, 2.0f);
@@ -35,7 +36,7 @@ GLuint screenWidth = 700, screenHeight = 500;
 //Pointers to Shader objects;
 Shader *cubeShaderPtr, *lampShaderPtr;
 
-int main(int argc, char **argv) 
+int main(int argc, char **argv)
 {
 	//initialise GLFW
 	if (!glfwInit()) {
@@ -82,12 +83,13 @@ int main(int argc, char **argv)
 
 	//Setup and compile our shaders
 	//need to be after glewInit(), otherwise got error
-	Shader cubeShader("CubeVertexShader.vs", "CubeFragmentShader.fs");
+	Shader cubeShader("CubeVertexShader_BasicLighting.vs", "CubeFragmentShader_BasicLighting.fs");
 	cubeShaderPtr = &cubeShader;
 	Shader lampShader("LampVertexShader.vs", "LampFragmentShader.fs");
 	lampShaderPtr = &lampShader;
 
 	initCubeVertexPositionBuffer();
+	initCubeVertexNormalBuffer();
 
 	while (!glfwWindowShouldClose(window))
 	{
@@ -111,8 +113,8 @@ int main(int argc, char **argv)
 	return 0;
 }
 
-//Method to initialise cube vertices and bind to buffer
-void initCubeVertexPositionBuffer() 
+//Method to initialise cube vertex positions and bind to buffer
+void initCubeVertexPositionBuffer()
 {
 	GLfloat vertices[] = {
 		-0.5f, -0.5f, -0.5f,
@@ -158,12 +160,64 @@ void initCubeVertexPositionBuffer()
 		-0.5f, 0.5f, -0.5f
 	};
 
-	glGenBuffers(1, &cubeVertexBuffer);
-	glBindBuffer(GL_ARRAY_BUFFER, cubeVertexBuffer);
+	glGenBuffers(1, &cubeVertexPositionBuffer);
+	glBindBuffer(GL_ARRAY_BUFFER, cubeVertexPositionBuffer);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 }
 
-void renderScene() 
+//Method to initialise cube vertex normals and bind to buffer
+void initCubeVertexNormalBuffer()
+{
+	GLfloat normals[] = {
+		0.0f, 0.0f, -1.0f,
+		0.0f, 0.0f, -1.0f,
+		0.0f, 0.0f, -1.0f,
+		0.0f, 0.0f, -1.0f,
+		0.0f, 0.0f, -1.0f,
+		0.0f, 0.0f, -1.0f,
+
+		0.0f, 0.0f, 1.0f,
+		0.0f, 0.0f, 1.0f,
+		0.0f, 0.0f, 1.0f,
+		0.0f, 0.0f, 1.0f,
+		0.0f, 0.0f, 1.0f,
+		0.0f, 0.0f, 1.0f,
+
+		-1.0f, 0.0f, 0.0f,
+		-1.0f, 0.0f, 0.0f,
+		-1.0f, 0.0f, 0.0f,
+		-1.0f, 0.0f, 0.0f,
+		-1.0f, 0.0f, 0.0f,
+		-1.0f, 0.0f, 0.0f,
+
+		1.0f, 0.0f, 0.0f,
+		1.0f, 0.0f, 0.0f,
+		1.0f, 0.0f, 0.0f,
+		1.0f, 0.0f, 0.0f,
+		1.0f, 0.0f, 0.0f,
+		1.0f, 0.0f, 0.0f,
+
+		0.0f, -1.0f, 0.0f,
+		0.0f, -1.0f, 0.0f,
+		0.0f, -1.0f, 0.0f,
+		0.0f, -1.0f, 0.0f,
+		0.0f, -1.0f, 0.0f,
+		0.0f, -1.0f, 0.0f,
+
+		0.0f, 1.0f, 0.0f,
+		0.0f, 1.0f, 0.0f,
+		0.0f, 1.0f, 0.0f,
+		0.0f, 1.0f, 0.0f,
+		0.0f, 1.0f, 0.0f,
+		0.0f, 1.0f, 0.0f
+	};
+
+	glGenBuffers(1, &cubeVertexNormalBuffer);
+	glBindBuffer(GL_ARRAY_BUFFER, cubeVertexNormalBuffer);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(normals), normals, GL_STATIC_DRAW);
+}
+
+void renderScene()
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -175,6 +229,10 @@ void renderScene()
 	GLint objectColorLoc = glGetUniformLocation(cubeShaderPtr->Program, "objectColor");
 	glUniform3f(objectColorLoc, 1.0f, 0.5f, 0.31f);
 
+	//Setting the uniform light position in Fragment Shader
+	GLint lightPosLoc = glGetUniformLocation(cubeShaderPtr->Program, "lightPos");
+	glUniform3f(lightPosLoc, lightPos.x, lightPos.y, lightPos.z);
+
 	//Create camera transformations
 	mat4 view;
 	view = camera.GetViewMatrix();
@@ -184,17 +242,27 @@ void renderScene()
 	GLint modelLoc = glGetUniformLocation(cubeShaderPtr->Program, "model");
 	GLint viewLoc = glGetUniformLocation(cubeShaderPtr->Program, "view");
 	GLint projLoc = glGetUniformLocation(cubeShaderPtr->Program, "projection");
+
 	//Pass the matrices to the shader
 	glUniformMatrix4fv(viewLoc, 1, GL_FALSE, value_ptr(view));
 	glUniformMatrix4fv(projLoc, 1, GL_FALSE, value_ptr(projection));
 
 	//draw the cube
 	glEnableVertexAttribArray(0);
-	glBindBuffer(GL_ARRAY_BUFFER, cubeVertexBuffer);
+	glBindBuffer(GL_ARRAY_BUFFER, cubeVertexPositionBuffer);
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
+
+	glEnableVertexAttribArray(1);
+	glBindBuffer(GL_ARRAY_BUFFER, cubeVertexNormalBuffer);
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, 0);
+
 	mat4 model;
 	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, value_ptr(model));
 	glDrawArrays(GL_TRIANGLES, 0, 36);
+
+	//Disable vertex atrributes
+	glDisableVertexAttribArray(0);
+	glDisableVertexAttribArray(1);
 
 	/////LAMP OBJECT/////
 	//use the shader for the lamp
@@ -208,10 +276,10 @@ void renderScene()
 	//Set matrices
 	glUniformMatrix4fv(viewLoc, 1, GL_FALSE, value_ptr(view));
 	glUniformMatrix4fv(projLoc, 1, GL_FALSE, value_ptr(projection));
-	
+
 	//draw lamp
 	glEnableVertexAttribArray(0);
-	glBindBuffer(GL_ARRAY_BUFFER, cubeVertexBuffer);
+	glBindBuffer(GL_ARRAY_BUFFER, cubeVertexPositionBuffer);
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
 	model = mat4();
 	model = translate(model, lightPos);

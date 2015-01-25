@@ -81,7 +81,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Camera.cpp" />
-    <ClCompile Include="Main_Colors.cpp" />
+    <ClCompile Include="Main_BasicLighting.cpp" />
     <ClCompile Include="Shader.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -89,7 +89,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Camera.h" />
-    <ClInclude Include="Globals.h" />
+    <ClInclude Include="Main_BasicLighting.h" />
     <ClInclude Include="Main_Colors.h" />
     <ClInclude Include="Shader.h" />
   </ItemGroup>
