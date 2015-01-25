@@ -221,6 +221,7 @@ void renderScene()
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+
 	/////CUBE OBJECT/////
 	//use the cube shader
 	cubeShaderPtr->Use();
@@ -232,6 +233,10 @@ void renderScene()
 	//Setting the uniform light position in Fragment Shader
 	GLint lightPosLoc = glGetUniformLocation(cubeShaderPtr->Program, "lightPos");
 	glUniform3f(lightPosLoc, lightPos.x, lightPos.y, lightPos.z);
+
+	//Setting uniform view position in Fragment Shader
+	GLint viewPosLoc = glGetUniformLocation(cubeShaderPtr->Program, "viewPos");
+	glUniform3f(viewPosLoc, camera.Position.x, camera.Position.y, camera.Position.z);
 
 	//Create camera transformations
 	mat4 view;

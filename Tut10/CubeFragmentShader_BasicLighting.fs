@@ -6,6 +6,7 @@ out vec4 color;
   
 uniform vec3 objectColor;
 uniform vec3 lightPos;
+uniform vec3 viewPos;
 
 void main()
 {
@@ -21,7 +22,17 @@ void main()
 	float diffuse = max(dot(norm, lightDir), 0.0);
 	diffuseComponent = diffuse * diffuseComponent;
 	
-	vec3 result = (ambientComponent + diffuseComponent) * objectColor;
+	//Adding specular lighting
+	vec3 specularComponent = vec3(0.5f);
+	
+	vec3 viewDir = normalize(viewPos - Position);
+	vec3 reflectDir = reflect(-lightDir, norm);
+	
+	int shininess = 32;		//the higher the value, the smaller the shiny spot
+	float specular = pow(max(dot(viewDir, reflectDir), 0.0), shininess);
+	specularComponent = specular * specularComponent;
+	
+	vec3 result = (ambientComponent + diffuseComponent + specularComponent) * objectColor;
 	
     color = vec4(result, 1.0f);
 }
