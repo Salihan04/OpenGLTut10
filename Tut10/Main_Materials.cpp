@@ -259,22 +259,14 @@ void renderScene()
 	GLint lightSpecularLoc = glGetUniformLocation(cubeShaderPtr->Program, "light.specular");
 
 	//Set material properties
-	glUniform3f(matAmbientLoc, 1.0f, 0.5f, 0.31f);
-	glUniform3f(matDiffuseLoc, 1.0f, 0.5f, 0.31f);
-	glUniform3f(matSpecularLoc, 0.5f, 0.5f, 0.5f);
+	glUniform3f(matAmbientLoc, 0.0f, 0.1f, 0.06f);
+	glUniform3f(matDiffuseLoc, 0.0f, 0.50980392f, 0.50980392f);
+	glUniform3f(matSpecularLoc, 0.50196078f, 0.50196078f, 0.50196078f);
 	glUniform1f(matShineLoc, 32.0f);
 
 	//Set lighting properties
-	vec3 lightColor;
-	lightColor.x = sin(glfwGetTime() * 2.0f);
-	lightColor.y = sin(glfwGetTime() * 0.7f);
-	lightColor.z = sin(glfwGetTime() * 1.3f);
-
-	vec3 diffuseColor = lightColor * vec3(0.5f); // Decrease the influence
-	vec3 ambientColor = diffuseColor * vec3(0.2f); // Low influence
-
-	glUniform3f(lightAmbientLoc, ambientColor.x, ambientColor.y, ambientColor.z);
-	glUniform3f(lightDiffuseLoc, diffuseColor.x, diffuseColor.y, diffuseColor.z);
+	glUniform3f(lightAmbientLoc, 1.0f, 1.0f, 1.0f);
+	glUniform3f(lightDiffuseLoc, 1.0f, 1.0f, 1.0f);
 	glUniform3f(lightSpecularLoc, 1.0f, 1.0f, 1.0f);
 
 	//Pass the matrices to the shader
