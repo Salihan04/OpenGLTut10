@@ -6,6 +6,14 @@ struct Material {
 	float shininess;
 };
 
+struct Light {
+	vec3 position;
+	
+	vec3 ambient;
+	vec3 diffuse;
+	vec3 specular;
+};
+
 in vec3 Position;
 in vec3 Normal;
 
@@ -16,6 +24,7 @@ uniform vec3 lightPos;
 uniform vec3 viewPos;
 
 uniform Material material;
+uniform Light light;
 
 void main()
 {
@@ -32,8 +41,8 @@ void main()
     float specular = pow(max(dot(viewDir, reflectDir), 0.0), material.shininess);
 
     //Combine results
-    vec3 ambientColor = material.ambient;
-    vec3 diffuseColor = diffuse * material.diffuse;
-    vec3 specularColor = specular * material.specular;
+    vec3 ambientColor = light.ambient * material.ambient;
+	vec3 diffuseColor = light.diffuse * diffuse * material.diffuse;
+	vec3 specularColor = light.specular * specular * material.specular;
     color = vec4(ambientColor + diffuseColor + specularColor, 1.0f);
 }
