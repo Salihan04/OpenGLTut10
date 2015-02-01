@@ -7,7 +7,7 @@ Adding lighting with OpenGL. Includes:
 * Lighting Casters
 * Multiple Lights
 
-Implemented using C++ in Visual Studio 2013 environment. Libraries installed using Nuget Package Manager ("Install-Package nupengl.core" for FreeGLUT, GLEW and GLFW, and "Install-Package glm" for GLM). 
+Implemented using C++ in Visual Studio 2013 environment. Libraries installed using Nuget Package Manager ("Install-Package nupengl.core" for FreeGLUT, GLEW and GLFW, and "Install-Package glm" for GLM). <a href="http://www.lonesock.net/soil.html">SOIL</a> was used for loading textures.
 <br><b>Note:</b> .gitignore is necessary for version control for Visual Studio 2013.
 <br><b>Important:</b> Must to import glew.h before freeglut.h
 <br><b>Reference:</b>
