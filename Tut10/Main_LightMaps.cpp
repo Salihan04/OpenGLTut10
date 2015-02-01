@@ -39,6 +39,7 @@ GLuint screenWidth = 700, screenHeight = 500;
 Shader *cubeShaderPtr, *lampShaderPtr;
 
 GLuint diffuseMap;
+GLuint specularMap;
 
 int main(int argc, char **argv)
 {
@@ -97,20 +98,7 @@ int main(int argc, char **argv)
 	initCubeTextureCoordsBuffer();
 
 	//Load textures
-	glGenTextures(1, &diffuseMap);
-	int width, height;
-	unsigned char* image;
-	//Diffuse map
-	image = SOIL_load_image("container2.png", &width, &height, 0, SOIL_LOAD_RGB);
-	glBindTexture(GL_TEXTURE_2D, diffuseMap);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, image);
-	glGenerateMipmap(GL_TEXTURE_2D);
-	SOIL_free_image_data(image);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST_MIPMAP_NEAREST);
-	glBindTexture(GL_TEXTURE_2D, 0);
+	loadTexture("container2.png", "container2_specular.png");
 
 	while (!glfwWindowShouldClose(window))
 	{
@@ -324,21 +312,23 @@ void renderScene()
 	GLint viewLoc = glGetUniformLocation(cubeShaderPtr->Program, "view");
 	GLint projLoc = glGetUniformLocation(cubeShaderPtr->Program, "projection");
 
-	glUniform1f(glGetUniformLocation(cubeShaderPtr->Program, "d"), 0);
+	// Set diffuse map
+	glUniform1f(glGetUniformLocation(cubeShaderPtr->Program, "diffuseSampler"), 0);
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, diffuseMap);
 
-	// Set diffuse map
-	GLint matSpecularLoc = glGetUniformLocation(cubeShaderPtr->Program, "material.specular");
+	//Set specular map
+	glUniform1i(glGetUniformLocation(cubeShaderPtr->Program, "specularSampler"), 0);
+	glActiveTexture(GL_TEXTURE1);
+	glBindTexture(GL_TEXTURE_2D, specularMap);
+
 	GLint matShineLoc = glGetUniformLocation(cubeShaderPtr->Program, "material.shininess");
 	GLint lightAmbientLoc = glGetUniformLocation(cubeShaderPtr->Program, "light.ambient");
 	GLint lightDiffuseLoc = glGetUniformLocation(cubeShaderPtr->Program, "light.diffuse");
-	GLint lightSpecularLoc = glGetUniformLocation(cubeShaderPtr->Program, "light.specular");
+	GLint lightSpecularLoc = glGetUniformLocation(cubeShaderPtr->Program, "light.specular");	
 
 	//Set material properties
-	
-	glUniform3f(matSpecularLoc, 0.50196078f, 0.50196078f, 0.50196078f);
-	glUniform1f(matShineLoc, 32.0f);
+	glUniform1f(matShineLoc, 64.0f);
 
 	//Set lighting properties
 	glUniform3f(lightAmbientLoc, 1.0f, 1.0f, 1.0f);
@@ -370,6 +360,12 @@ void renderScene()
 	glDisableVertexAttribArray(0);
 	glDisableVertexAttribArray(1);
 	glDisableVertexAttribArray(2);
+
+	//Unbind textures (safe practice)
+	glActiveTexture(GL_TEXTURE1);
+	glBindTexture(GL_TEXTURE_2D, 0);
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, 0);
 
 	/////LAMP OBJECT/////
 	//Use the shader for the lamp
@@ -442,4 +438,34 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos)
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
 {
 	camera.ProcessMouseScroll(yoffset);
+}
+
+//Method to load texture
+void loadTexture(char *diffuseMapPath, char *specularMapPath) {
+	glGenTextures(1, &diffuseMap);
+	glGenTextures(1, &specularMap);
+	int width, height;
+	unsigned char* image;
+	// Diffuse map
+	image = SOIL_load_image(diffuseMapPath, &width, &height, 0, SOIL_LOAD_RGB);
+	glBindTexture(GL_TEXTURE_2D, diffuseMap);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, image);
+	glGenerateMipmap(GL_TEXTURE_2D);
+	SOIL_free_image_data(image);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST_MIPMAP_NEAREST);
+	// Specular map
+	image = SOIL_load_image(specularMapPath, &width, &height, 0, SOIL_LOAD_RGB);
+	glBindTexture(GL_TEXTURE_2D, specularMap);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, image);
+	glGenerateMipmap(GL_TEXTURE_2D);
+	SOIL_free_image_data(image);
+	// Set texture filtering/wrapping)
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST_MIPMAP_NEAREST);
+	glBindTexture(GL_TEXTURE_2D, 0);
 }
