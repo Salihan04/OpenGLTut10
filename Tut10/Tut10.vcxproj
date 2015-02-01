@@ -55,10 +55,12 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>C:\Users\User\MY_PORTFOLIO\OpenGL\Tut10\Tut10;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>SOIL.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -81,7 +83,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Camera.cpp" />
-    <ClCompile Include="Main_Materials.cpp" />
+    <ClCompile Include="Main_LightMaps.cpp" />
     <ClCompile Include="Shader.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -91,6 +93,7 @@
     <ClInclude Include="Camera.h" />
     <ClInclude Include="Main_BasicLighting.h" />
     <ClInclude Include="Main_Colors.h" />
+    <ClInclude Include="Main_LightMaps.h" />
     <ClInclude Include="Main_Materials.h" />
     <ClInclude Include="Shader.h" />
   </ItemGroup>
