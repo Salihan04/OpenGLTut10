@@ -88,7 +88,7 @@ int main(int argc, char **argv)
 
 	//Setup and compile our shaders
 	//need to be after glewInit(), otherwise got error
-	Shader cubeShader("CubeVertexShader_LightMaps.vs", "CubeFragmentShader_LightMaps.fs");
+	Shader cubeShader("CubeVertexShader_LightCasters.vs", "CubeFragmentShader_LightCasters.fs");
 	cubeShaderPtr = &cubeShader;
 	Shader lampShader("LampVertexShader.vs", "LampFragmentShader.fs");
 	lampShaderPtr = &lampShader;
@@ -323,6 +323,7 @@ void renderScene()
 	glBindTexture(GL_TEXTURE_2D, specularMap);
 
 	GLint matShineLoc = glGetUniformLocation(cubeShaderPtr->Program, "material.shininess");
+	GLint lightDirPos = glGetUniformLocation(cubeShaderPtr->Program, "light.direction");
 	GLint lightAmbientLoc = glGetUniformLocation(cubeShaderPtr->Program, "light.ambient");
 	GLint lightDiffuseLoc = glGetUniformLocation(cubeShaderPtr->Program, "light.diffuse");
 	GLint lightSpecularLoc = glGetUniformLocation(cubeShaderPtr->Program, "light.specular");
@@ -331,8 +332,9 @@ void renderScene()
 	glUniform1f(matShineLoc, 64.0f);
 
 	//Set lighting properties
-	glUniform3f(lightAmbientLoc, 1.0f, 1.0f, 1.0f);
-	glUniform3f(lightDiffuseLoc, 1.0f, 1.0f, 1.0f);
+	glUniform3f(lightDirPos, -0.2f, -1.0f, -0.3f);
+	glUniform3f(lightAmbientLoc, 0.2f, 0.2f, 0.2f);
+	glUniform3f(lightDiffuseLoc, 0.5f, 0.5f, 0.5f);
 	glUniform3f(lightSpecularLoc, 1.0f, 1.0f, 1.0f);
 
 	//Pass the matrices to the shader
@@ -352,9 +354,31 @@ void renderScene()
 	glBindBuffer(GL_ARRAY_BUFFER, cubeTextureCoordBuffer);
 	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 0, 0);
 
+	// Positions of all our containers
+	glm::vec3 cubePositions[] = {
+		glm::vec3(0.0f, 0.0f, 0.0f),
+		glm::vec3(2.0f, 5.0f, -15.0f),
+		glm::vec3(-1.5f, -2.2f, -2.5f),
+		glm::vec3(-3.8f, -2.0f, -12.3f),
+		glm::vec3(2.4f, -0.4f, -3.5f),
+		glm::vec3(-1.7f, 3.0f, -7.5f),
+		glm::vec3(1.3f, -2.0f, -2.5f),
+		glm::vec3(1.5f, 2.0f, -2.5f),
+		glm::vec3(1.5f, 0.2f, -1.5f),
+		glm::vec3(-1.3f, 1.0f, -1.5f)
+	};
+
 	mat4 model;
-	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, value_ptr(model));
-	glDrawArrays(GL_TRIANGLES, 0, 36);
+	for (GLint i = 0; i < 10; i++)
+	{
+		model = mat4();
+		model = translate(model, cubePositions[i]);
+		GLfloat angle = 20.0f * i;
+		model = rotate(model, angle, vec3(1.0f, 3.0f, 5.0f));
+
+		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, value_ptr(model));
+		glDrawArrays(GL_TRIANGLES, 0, 36);
+	}
 
 	//Disable vertex atrributes
 	glDisableVertexAttribArray(0);
