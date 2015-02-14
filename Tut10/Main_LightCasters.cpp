@@ -346,6 +346,7 @@ void renderScene()
 
 	glUniform3f(glGetUniformLocation(cubeShaderPtr->Program, "light.spotDir"), camera.Front.x, camera.Front.y, camera.Front.z);
 	glUniform1f(glGetUniformLocation(cubeShaderPtr->Program, "light.spotCutOff"), cos(radians(12.5f)));
+	glUniform1f(glGetUniformLocation(cubeShaderPtr->Program, "light.spotOuterCutOff"), cos(radians(17.5f)));
 
 	//Pass the matrices to the shader
 	glUniformMatrix4fv(viewLoc, 1, GL_FALSE, value_ptr(view));
