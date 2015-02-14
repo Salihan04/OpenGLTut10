@@ -291,12 +291,15 @@ void renderScene()
 	cubeShaderPtr->Use();
 
 	//Set uniform objectColor in Fragment Shader
-	GLint objectColorLoc = glGetUniformLocation(cubeShaderPtr->Program, "objectColor");
-	glUniform3f(objectColorLoc, 1.0f, 0.5f, 0.31f);
+	//GLint objectColorLoc = glGetUniformLocation(cubeShaderPtr->Program, "objectColor");
+	//glUniform3f(objectColorLoc, 1.0f, 0.5f, 0.31f);
 
 	//Setting the uniform light position in Fragment Shader
-	GLint lightPosLoc = glGetUniformLocation(cubeShaderPtr->Program, "lightPos");
-	glUniform3f(lightPosLoc, lightPos.x, lightPos.y, lightPos.z);
+	GLint lightPosLoc = glGetUniformLocation(cubeShaderPtr->Program, "light.position");
+	//glUniform3f(lightPosLoc, lightPos.x, lightPos.y, lightPos.z);
+
+	//The below is needed for spotlight
+	glUniform3f(lightPosLoc, camera.Position.x, camera.Position.y, camera.Position.z);
 
 	//Setting uniform view position in Fragment Shader
 	GLint viewPosLoc = glGetUniformLocation(cubeShaderPtr->Program, "viewPos");
@@ -318,7 +321,7 @@ void renderScene()
 	glBindTexture(GL_TEXTURE_2D, diffuseMap);
 
 	//Set specular map
-	glUniform1i(glGetUniformLocation(cubeShaderPtr->Program, "specularSampler"), 0);
+	glUniform1i(glGetUniformLocation(cubeShaderPtr->Program, "specularSampler"), 1);
 	glActiveTexture(GL_TEXTURE1);
 	glBindTexture(GL_TEXTURE_2D, specularMap);
 
@@ -336,10 +339,13 @@ void renderScene()
 	glUniform3f(lightAmbientLoc, 0.1f, 0.1f, 0.1f);
 	glUniform3f(lightDiffuseLoc, 0.8f, 0.8f, 0.8f);
 	glUniform3f(lightSpecularLoc, 1.0f, 1.0f, 1.0f);
-	//Point light properties
+	//The below 3 are needed for point light
 	glUniform1f(glGetUniformLocation(cubeShaderPtr->Program, "light.constant"), 1.0f);
 	glUniform1f(glGetUniformLocation(cubeShaderPtr->Program, "light.linear"), 0.09);
 	glUniform1f(glGetUniformLocation(cubeShaderPtr->Program, "light.quadratic"), 0.032);
+
+	glUniform3f(glGetUniformLocation(cubeShaderPtr->Program, "light.spotDir"), camera.Front.x, camera.Front.y, camera.Front.z);
+	glUniform1f(glGetUniformLocation(cubeShaderPtr->Program, "light.spotCutOff"), cos(radians(12.5f)));
 
 	//Pass the matrices to the shader
 	glUniformMatrix4fv(viewLoc, 1, GL_FALSE, value_ptr(view));
@@ -395,31 +401,31 @@ void renderScene()
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, 0);
 
-	/////LAMP OBJECT/////
-	//Use the shader for the lamp
-	lampShaderPtr->Use();
+	///////LAMP OBJECT/////
+	////Use the shader for the lamp
+	//lampShaderPtr->Use();
 
-	//Get location objects for the matrices on our lamp shader 
-	//(these could be different on a different shader)
-	modelLoc = glGetUniformLocation(lampShaderPtr->Program, "model");
-	viewLoc = glGetUniformLocation(lampShaderPtr->Program, "view");
-	projLoc = glGetUniformLocation(lampShaderPtr->Program, "projection");
-	//Set matrices
-	glUniformMatrix4fv(viewLoc, 1, GL_FALSE, value_ptr(view));
-	glUniformMatrix4fv(projLoc, 1, GL_FALSE, value_ptr(projection));
+	////Get location objects for the matrices on our lamp shader 
+	////(these could be different on a different shader)
+	//modelLoc = glGetUniformLocation(lampShaderPtr->Program, "model");
+	//viewLoc = glGetUniformLocation(lampShaderPtr->Program, "view");
+	//projLoc = glGetUniformLocation(lampShaderPtr->Program, "projection");
+	////Set matrices
+	//glUniformMatrix4fv(viewLoc, 1, GL_FALSE, value_ptr(view));
+	//glUniformMatrix4fv(projLoc, 1, GL_FALSE, value_ptr(projection));
 
-	//Draw lamp
-	glEnableVertexAttribArray(0);
-	glBindBuffer(GL_ARRAY_BUFFER, cubeVertexPositionBuffer);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
-	model = mat4();
-	model = translate(model, lightPos);
-	model = scale(model, vec3(0.2f)); // Make it a smaller cube
-	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, value_ptr(model));
-	glDrawArrays(GL_TRIANGLES, 0, 36);
+	////Draw lamp
+	//glEnableVertexAttribArray(0);
+	//glBindBuffer(GL_ARRAY_BUFFER, cubeVertexPositionBuffer);
+	//glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
+	//model = mat4();
+	//model = translate(model, lightPos);
+	//model = scale(model, vec3(0.2f)); // Make it a smaller cube
+	//glUniformMatrix4fv(modelLoc, 1, GL_FALSE, value_ptr(model));
+	//glDrawArrays(GL_TRIANGLES, 0, 36);
 
 	//Disable vertex atrributes
-	glDisableVertexAttribArray(0);
+	//glDisableVertexAttribArray(0);
 }
 
 //Moves/alters the camera positions based on user input
