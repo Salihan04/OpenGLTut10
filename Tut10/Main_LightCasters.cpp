@@ -323,7 +323,7 @@ void renderScene()
 	glBindTexture(GL_TEXTURE_2D, specularMap);
 
 	GLint matShineLoc = glGetUniformLocation(cubeShaderPtr->Program, "material.shininess");
-	GLint lightDirPos = glGetUniformLocation(cubeShaderPtr->Program, "light.direction");
+	//GLint lightDirPos = glGetUniformLocation(cubeShaderPtr->Program, "light.direction");
 	GLint lightAmbientLoc = glGetUniformLocation(cubeShaderPtr->Program, "light.ambient");
 	GLint lightDiffuseLoc = glGetUniformLocation(cubeShaderPtr->Program, "light.diffuse");
 	GLint lightSpecularLoc = glGetUniformLocation(cubeShaderPtr->Program, "light.specular");
@@ -332,10 +332,14 @@ void renderScene()
 	glUniform1f(matShineLoc, 64.0f);
 
 	//Set lighting properties
-	glUniform3f(lightDirPos, -0.2f, -1.0f, -0.3f);
-	glUniform3f(lightAmbientLoc, 0.2f, 0.2f, 0.2f);
-	glUniform3f(lightDiffuseLoc, 0.5f, 0.5f, 0.5f);
+	//glUniform3f(lightDirPos, -0.2f, -1.0f, -0.3f);	//Needed for directional light
+	glUniform3f(lightAmbientLoc, 0.1f, 0.1f, 0.1f);
+	glUniform3f(lightDiffuseLoc, 0.8f, 0.8f, 0.8f);
 	glUniform3f(lightSpecularLoc, 1.0f, 1.0f, 1.0f);
+	//Point light properties
+	glUniform1f(glGetUniformLocation(cubeShaderPtr->Program, "light.constant"), 1.0f);
+	glUniform1f(glGetUniformLocation(cubeShaderPtr->Program, "light.linear"), 0.09);
+	glUniform1f(glGetUniformLocation(cubeShaderPtr->Program, "light.quadratic"), 0.032);
 
 	//Pass the matrices to the shader
 	glUniformMatrix4fv(viewLoc, 1, GL_FALSE, value_ptr(view));
