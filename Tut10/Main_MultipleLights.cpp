@@ -357,7 +357,6 @@ void renderScene()
 	glUniform1f(glGetUniformLocation(cubeShaderPtr->Program, "pointLights[3].linear"), 0.09);
 	glUniform1f(glGetUniformLocation(cubeShaderPtr->Program, "pointLights[3].quadratic"), 0.032);
 
-	/*
 	//SpotLight
 	glUniform3f(glGetUniformLocation(cubeShaderPtr->Program, "spotLight.position"), camera.Position.x, camera.Position.y, camera.Position.z);
 	glUniform3f(glGetUniformLocation(cubeShaderPtr->Program, "spotLight.direction"), camera.Front.x, camera.Front.y, camera.Front.z);
@@ -369,7 +368,6 @@ void renderScene()
 	glUniform1f(glGetUniformLocation(cubeShaderPtr->Program, "spotLight.quadratic"), 0.032);
 	glUniform1f(glGetUniformLocation(cubeShaderPtr->Program, "spotLight.cutOff"), glm::cos(glm::radians(12.5f)));
 	glUniform1f(glGetUniformLocation(cubeShaderPtr->Program, "spotLight.outerCutOff"), glm::cos(glm::radians(15.0f)));
-	*/
 
 	//Create camera transformations
 	view = camera.GetViewMatrix();
