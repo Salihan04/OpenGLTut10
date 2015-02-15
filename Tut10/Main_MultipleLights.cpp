@@ -19,6 +19,7 @@ using namespace glm;
 GLuint cubeVertexPositionBuffer;
 GLuint cubeVertexNormalBuffer;
 GLuint cubeTextureCoordBuffer;
+GLuint lampColorBuffer;
 
 //Object properties
 vec3 lightPos(1.2f, 1.0f, 2.0f);
@@ -83,14 +84,19 @@ int main(int argc, char **argv)
 	//Define the viewport dimensions
 	glViewport(0, 0, screenWidth, screenHeight);
 
-	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+	//glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+	glClearColor(0.75f, 0.52f, 0.3f, 1.0f);		//Desert
+	//glClearColor(0.1f, 0.1f, 0.1f, 1.0f);		//Factory
+	//glClearColor(0.0f, 0.0f, 0.0f, 1.0f);		//Horror
+	//glClearColor(0.9f, 0.9f, 0.9f, 1.0f);		//Biochemical Lab
+
 	glEnable(GL_DEPTH_TEST);
 
 	//Setup and compile our shaders
 	//need to be after glewInit(), otherwise got error
 	Shader cubeShader("CubeVertexShader_MultipleLights.vs", "CubeFragmentShader_MultipleLights.fs");
 	cubeShaderPtr = &cubeShader;
-	Shader lampShader("LampVertexShader.vs", "LampFragmentShader.fs");
+	Shader lampShader("LampVertexShader_MultipleLights.vs", "LampFragmentShader_MultipleLights.fs");
 	lampShaderPtr = &lampShader;
 
 	initCubeVertexPositionBuffer();
@@ -278,6 +284,57 @@ void initCubeTextureCoordsBuffer()
 	glBufferData(GL_ARRAY_BUFFER, sizeof(textCoords), textCoords, GL_STATIC_DRAW);
 }
 
+void initLampColorBuffer(vec3 pointLightColor)
+{
+	GLfloat colors[] = {
+		pointLightColor.x, pointLightColor.y, pointLightColor.z,
+		pointLightColor.x, pointLightColor.y, pointLightColor.z,
+		pointLightColor.x, pointLightColor.y, pointLightColor.z,
+		pointLightColor.x, pointLightColor.y, pointLightColor.z,
+		pointLightColor.x, pointLightColor.y, pointLightColor.z,
+		pointLightColor.x, pointLightColor.y, pointLightColor.z,
+
+		pointLightColor.x, pointLightColor.y, pointLightColor.z,
+		pointLightColor.x, pointLightColor.y, pointLightColor.z,
+		pointLightColor.x, pointLightColor.y, pointLightColor.z,
+		pointLightColor.x, pointLightColor.y, pointLightColor.z,
+		pointLightColor.x, pointLightColor.y, pointLightColor.z,
+		pointLightColor.x, pointLightColor.y, pointLightColor.z,
+
+		pointLightColor.x, pointLightColor.y, pointLightColor.z,
+		pointLightColor.x, pointLightColor.y, pointLightColor.z,
+		pointLightColor.x, pointLightColor.y, pointLightColor.z,
+		pointLightColor.x, pointLightColor.y, pointLightColor.z,
+		pointLightColor.x, pointLightColor.y, pointLightColor.z,
+		pointLightColor.x, pointLightColor.y, pointLightColor.z,
+
+		pointLightColor.x, pointLightColor.y, pointLightColor.z,
+		pointLightColor.x, pointLightColor.y, pointLightColor.z,
+		pointLightColor.x, pointLightColor.y, pointLightColor.z,
+		pointLightColor.x, pointLightColor.y, pointLightColor.z,
+		pointLightColor.x, pointLightColor.y, pointLightColor.z,
+		pointLightColor.x, pointLightColor.y, pointLightColor.z,
+
+		pointLightColor.x, pointLightColor.y, pointLightColor.z,
+		pointLightColor.x, pointLightColor.y, pointLightColor.z,
+		pointLightColor.x, pointLightColor.y, pointLightColor.z,
+		pointLightColor.x, pointLightColor.y, pointLightColor.z,
+		pointLightColor.x, pointLightColor.y, pointLightColor.z,
+		pointLightColor.x, pointLightColor.y, pointLightColor.z,
+
+		pointLightColor.x, pointLightColor.y, pointLightColor.z,
+		pointLightColor.x, pointLightColor.y, pointLightColor.z,
+		pointLightColor.x, pointLightColor.y, pointLightColor.z,
+		pointLightColor.x, pointLightColor.y, pointLightColor.z,
+		pointLightColor.x, pointLightColor.y, pointLightColor.z,
+		pointLightColor.x, pointLightColor.y, pointLightColor.z
+	};
+
+	glGenBuffers(1, &lampColorBuffer);
+	glBindBuffer(GL_ARRAY_BUFFER, lampColorBuffer);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(colors), colors, GL_STATIC_DRAW);
+}
+
 void renderScene()
 {
 	GLint viewPosLoc, lightPosLoc, modelLoc, viewLoc, projLoc, matShineLoc, lightAmbientLoc, 
@@ -304,6 +361,43 @@ void renderScene()
 		vec3(0.0f, 0.0f, -3.0f)
 	};
 
+	//Point light colors for Desert
+	vec3 pointLightColors[] = {
+		vec3(1.0f, 0.6f, 0.0f),
+		vec3(1.0f, 0.0f, 0.0f),
+		vec3(1.0f, 1.0, 0.0),
+		vec3(0.2f, 0.2f, 1.0f)
+	};
+
+	/*
+	//Point light colors for Factory
+	vec3 pointLightColors[] = {
+		vec3(0.2f, 0.2f, 0.6f),
+		vec3(0.3f, 0.3f, 0.7f),
+		vec3(0.0f, 0.0f, 0.3f),
+		vec3(0.4f, 0.4f, 0.4f)
+	};
+	*/
+
+	/*
+	//Point light colors for Horror
+	vec3 pointLightColors[] = {
+		vec3(0.1f, 0.1f, 0.1f),
+		vec3(0.1f, 0.1f, 0.1f),
+		vec3(0.1f, 0.1f, 0.1f),
+		vec3(0.3f, 0.1f, 0.1f)
+	};
+	*/
+
+	/*
+	//Point light colors for Biochemical Lab
+	vec3 pointLightColors[] = {
+		vec3(0.4f, 0.7f, 0.1f),
+		vec3(0.4f, 0.7f, 0.1f),
+		vec3(0.4f, 0.7f, 0.1f),
+		vec3(0.4f, 0.7f, 0.1f)
+	};
+	*/
 
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -315,12 +409,12 @@ void renderScene()
 	viewPosLoc = glGetUniformLocation(cubeShaderPtr->Program, "viewPos");
 	glUniform3f(viewPosLoc, camera.Position.x, camera.Position.y, camera.Position.z);
 
+	/*
 	//Directional light
 	glUniform3f(glGetUniformLocation(cubeShaderPtr->Program, "dirLight.direction"), -0.2f, -1.0f, -0.3f);
 	glUniform3f(glGetUniformLocation(cubeShaderPtr->Program, "dirLight.ambient"), 0.05f, 0.05f, 0.05f);
 	glUniform3f(glGetUniformLocation(cubeShaderPtr->Program, "dirLight.diffuse"), 0.4f, 0.4f, 0.4f);
 	glUniform3f(glGetUniformLocation(cubeShaderPtr->Program, "dirLight.specular"), 0.5f, 0.5f, 0.5f);
-	
 	//Point light 1
 	glUniform3f(glGetUniformLocation(cubeShaderPtr->Program, "pointLights[0].position"), pointLightPositions[0].x, pointLightPositions[0].y, pointLightPositions[0].z);
 	glUniform3f(glGetUniformLocation(cubeShaderPtr->Program, "pointLights[0].ambient"), 0.05f, 0.05f, 0.05f);
@@ -329,7 +423,6 @@ void renderScene()
 	glUniform1f(glGetUniformLocation(cubeShaderPtr->Program, "pointLights[0].constant"), 1.0f);
 	glUniform1f(glGetUniformLocation(cubeShaderPtr->Program, "pointLights[0].linear"), 0.09);
 	glUniform1f(glGetUniformLocation(cubeShaderPtr->Program, "pointLights[0].quadratic"), 0.032);
-
 	//Point light 2
 	glUniform3f(glGetUniformLocation(cubeShaderPtr->Program, "pointLights[1].position"), pointLightPositions[1].x, pointLightPositions[1].y, pointLightPositions[1].z);
 	glUniform3f(glGetUniformLocation(cubeShaderPtr->Program, "pointLights[1].ambient"), 0.05f, 0.05f, 0.05f);
@@ -338,7 +431,6 @@ void renderScene()
 	glUniform1f(glGetUniformLocation(cubeShaderPtr->Program, "pointLights[1].constant"), 1.0f);
 	glUniform1f(glGetUniformLocation(cubeShaderPtr->Program, "pointLights[1].linear"), 0.09);
 	glUniform1f(glGetUniformLocation(cubeShaderPtr->Program, "pointLights[1].quadratic"), 0.032);
-
 	//Point light 3
 	glUniform3f(glGetUniformLocation(cubeShaderPtr->Program, "pointLights[2].position"), pointLightPositions[2].x, pointLightPositions[2].y, pointLightPositions[2].z);
 	glUniform3f(glGetUniformLocation(cubeShaderPtr->Program, "pointLights[2].ambient"), 0.05f, 0.05f, 0.05f);
@@ -347,7 +439,6 @@ void renderScene()
 	glUniform1f(glGetUniformLocation(cubeShaderPtr->Program, "pointLights[2].constant"), 1.0f);
 	glUniform1f(glGetUniformLocation(cubeShaderPtr->Program, "pointLights[2].linear"), 0.09);
 	glUniform1f(glGetUniformLocation(cubeShaderPtr->Program, "pointLights[2].quadratic"), 0.032);
-
 	//Point light 4
 	glUniform3f(glGetUniformLocation(cubeShaderPtr->Program, "pointLights[3].position"), pointLightPositions[3].x, pointLightPositions[3].y, pointLightPositions[3].z);
 	glUniform3f(glGetUniformLocation(cubeShaderPtr->Program, "pointLights[3].ambient"), 0.05f, 0.05f, 0.05f);
@@ -356,7 +447,6 @@ void renderScene()
 	glUniform1f(glGetUniformLocation(cubeShaderPtr->Program, "pointLights[3].constant"), 1.0f);
 	glUniform1f(glGetUniformLocation(cubeShaderPtr->Program, "pointLights[3].linear"), 0.09);
 	glUniform1f(glGetUniformLocation(cubeShaderPtr->Program, "pointLights[3].quadratic"), 0.032);
-
 	//SpotLight
 	glUniform3f(glGetUniformLocation(cubeShaderPtr->Program, "spotLight.position"), camera.Position.x, camera.Position.y, camera.Position.z);
 	glUniform3f(glGetUniformLocation(cubeShaderPtr->Program, "spotLight.direction"), camera.Front.x, camera.Front.y, camera.Front.z);
@@ -368,6 +458,57 @@ void renderScene()
 	glUniform1f(glGetUniformLocation(cubeShaderPtr->Program, "spotLight.quadratic"), 0.032);
 	glUniform1f(glGetUniformLocation(cubeShaderPtr->Program, "spotLight.cutOff"), glm::cos(glm::radians(12.5f)));
 	glUniform1f(glGetUniformLocation(cubeShaderPtr->Program, "spotLight.outerCutOff"), glm::cos(glm::radians(15.0f)));
+	*/
+
+	///DESERT///
+	//Directional light
+	glUniform3f(glGetUniformLocation(cubeShaderPtr->Program, "dirLight.direction"), -0.2f, -1.0f, -0.3f);
+	glUniform3f(glGetUniformLocation(cubeShaderPtr->Program, "dirLight.ambient"), 0.3f, 0.24f, 0.14f);
+	glUniform3f(glGetUniformLocation(cubeShaderPtr->Program, "dirLight.diffuse"), 0.7f, 0.42f, 0.26f);
+	glUniform3f(glGetUniformLocation(cubeShaderPtr->Program, "dirLight.specular"), 0.5f, 0.5f, 0.5f);
+	//Point light 1
+	glUniform3f(glGetUniformLocation(cubeShaderPtr->Program, "pointLights[0].position"), pointLightPositions[0].x, pointLightPositions[0].y, pointLightPositions[0].z);
+	glUniform3f(glGetUniformLocation(cubeShaderPtr->Program, "pointLights[0].ambient"), pointLightColors[0].x * 0.1, pointLightColors[0].y * 0.1, pointLightColors[0].z * 0.1);
+	glUniform3f(glGetUniformLocation(cubeShaderPtr->Program, "pointLights[0].diffuse"), pointLightColors[0].x, pointLightColors[0].y, pointLightColors[0].z);
+	glUniform3f(glGetUniformLocation(cubeShaderPtr->Program, "pointLights[0].specular"), pointLightColors[0].x, pointLightColors[0].y, pointLightColors[0].z);
+	glUniform1f(glGetUniformLocation(cubeShaderPtr->Program, "pointLights[0].constant"), 1.0f);
+	glUniform1f(glGetUniformLocation(cubeShaderPtr->Program, "pointLights[0].linear"), 0.09);
+	glUniform1f(glGetUniformLocation(cubeShaderPtr->Program, "pointLights[0].quadratic"), 0.032);
+	//Point light 2
+	glUniform3f(glGetUniformLocation(cubeShaderPtr->Program, "pointLights[1].position"), pointLightPositions[1].x, pointLightPositions[1].y, pointLightPositions[1].z);
+	glUniform3f(glGetUniformLocation(cubeShaderPtr->Program, "pointLights[1].ambient"), pointLightColors[1].x * 0.1, pointLightColors[1].y * 0.1, pointLightColors[1].z * 0.1);
+	glUniform3f(glGetUniformLocation(cubeShaderPtr->Program, "pointLights[1].diffuse"), pointLightColors[1].x, pointLightColors[1].y, pointLightColors[1].z);
+	glUniform3f(glGetUniformLocation(cubeShaderPtr->Program, "pointLights[1].specular"), pointLightColors[1].x, pointLightColors[1].y, pointLightColors[1].z);
+	glUniform1f(glGetUniformLocation(cubeShaderPtr->Program, "pointLights[1].constant"), 1.0f);
+	glUniform1f(glGetUniformLocation(cubeShaderPtr->Program, "pointLights[1].linear"), 0.09);
+	glUniform1f(glGetUniformLocation(cubeShaderPtr->Program, "pointLights[1].quadratic"), 0.032);
+	//Point light 3
+	glUniform3f(glGetUniformLocation(cubeShaderPtr->Program, "pointLights[2].position"), pointLightPositions[2].x, pointLightPositions[2].y, pointLightPositions[2].z);
+	glUniform3f(glGetUniformLocation(cubeShaderPtr->Program, "pointLights[2].ambient"), pointLightColors[2].x * 0.1, pointLightColors[2].y * 0.1, pointLightColors[2].z * 0.1);
+	glUniform3f(glGetUniformLocation(cubeShaderPtr->Program, "pointLights[2].diffuse"), pointLightColors[2].x, pointLightColors[2].y, pointLightColors[2].z);
+	glUniform3f(glGetUniformLocation(cubeShaderPtr->Program, "pointLights[2].specular"), pointLightColors[2].x, pointLightColors[2].y, pointLightColors[2].z);
+	glUniform1f(glGetUniformLocation(cubeShaderPtr->Program, "pointLights[2].constant"), 1.0f);
+	glUniform1f(glGetUniformLocation(cubeShaderPtr->Program, "pointLights[2].linear"), 0.09);
+	glUniform1f(glGetUniformLocation(cubeShaderPtr->Program, "pointLights[2].quadratic"), 0.032);
+	//Point light 4
+	glUniform3f(glGetUniformLocation(cubeShaderPtr->Program, "pointLights[3].position"), pointLightPositions[3].x, pointLightPositions[3].y, pointLightPositions[3].z);
+	glUniform3f(glGetUniformLocation(cubeShaderPtr->Program, "pointLights[3].ambient"), pointLightColors[3].x * 0.1, pointLightColors[3].y * 0.1, pointLightColors[3].z * 0.1);
+	glUniform3f(glGetUniformLocation(cubeShaderPtr->Program, "pointLights[3].diffuse"), pointLightColors[3].x, pointLightColors[3].y, pointLightColors[3].z);
+	glUniform3f(glGetUniformLocation(cubeShaderPtr->Program, "pointLights[3].specular"), pointLightColors[3].x, pointLightColors[3].y, pointLightColors[3].z);
+	glUniform1f(glGetUniformLocation(cubeShaderPtr->Program, "pointLights[3].constant"), 1.0f);
+	glUniform1f(glGetUniformLocation(cubeShaderPtr->Program, "pointLights[3].linear"), 0.09);
+	glUniform1f(glGetUniformLocation(cubeShaderPtr->Program, "pointLights[3].quadratic"), 0.032);
+	//SpotLight
+	glUniform3f(glGetUniformLocation(cubeShaderPtr->Program, "spotLight.position"), camera.Position.x, camera.Position.y, camera.Position.z);
+	glUniform3f(glGetUniformLocation(cubeShaderPtr->Program, "spotLight.direction"), camera.Front.x, camera.Front.y, camera.Front.z);
+	glUniform3f(glGetUniformLocation(cubeShaderPtr->Program, "spotLight.ambient"), 0.0f, 0.0f, 0.0f);
+	glUniform3f(glGetUniformLocation(cubeShaderPtr->Program, "spotLight.diffuse"), 0.8f, 0.8f, 0.0f);
+	glUniform3f(glGetUniformLocation(cubeShaderPtr->Program, "spotLight.specular"), 0.8f, 0.8f, 0.0f);
+	glUniform1f(glGetUniformLocation(cubeShaderPtr->Program, "spotLight.constant"), 1.0f);
+	glUniform1f(glGetUniformLocation(cubeShaderPtr->Program, "spotLight.linear"), 0.09);
+	glUniform1f(glGetUniformLocation(cubeShaderPtr->Program, "spotLight.quadratic"), 0.032);
+	glUniform1f(glGetUniformLocation(cubeShaderPtr->Program, "spotLight.cutOff"), glm::cos(glm::radians(12.5f)));
+	glUniform1f(glGetUniformLocation(cubeShaderPtr->Program, "spotLight.outerCutOff"), glm::cos(glm::radians(13.0f)));
 
 	//Create camera transformations
 	view = camera.GetViewMatrix();
@@ -449,6 +590,11 @@ void renderScene()
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
 	for (GLuint i = 0; i < 4; i++)
 	{
+		initLampColorBuffer(pointLightColors[i]);
+		glEnableVertexAttribArray(1);
+		glBindBuffer(GL_ARRAY_BUFFER, lampColorBuffer);
+		glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, 0);
+
 		model = glm::mat4();
 		model = glm::translate(model, pointLightPositions[i]);
 		model = glm::scale(model, glm::vec3(0.2f));		//Make it a smaller cube
@@ -458,6 +604,7 @@ void renderScene()
 
 	//Disable vertex atrributes
 	glDisableVertexAttribArray(0);
+	glDisableVertexAttribArray(1);
 }
 
 //Moves/alters the camera positions based on user input
