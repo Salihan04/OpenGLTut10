@@ -83,7 +83,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Camera.cpp" />
-    <ClCompile Include="Main_LightCasters.cpp" />
+    <ClCompile Include="Main_MultipleLights.cpp" />
     <ClCompile Include="Shader.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -96,6 +96,7 @@
     <ClInclude Include="Main_LightCasters.h" />
     <ClInclude Include="Main_LightMaps.h" />
     <ClInclude Include="Main_Materials.h" />
+    <ClInclude Include="Main_MultipleLights.h" />
     <ClInclude Include="Shader.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
