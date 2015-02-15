@@ -21,7 +21,7 @@
     <ClCompile Include="Camera.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Main_MultipleLights.cpp">
+    <ClCompile Include="Main_LightCasters.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

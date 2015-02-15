@@ -15,7 +15,7 @@
 using namespace std;
 using namespace glm;
 
-GLuint cubeVertexPositionBuffer;
+GLuint cubeVertexBuffer;
 
 //Object properties
 vec3 lightPos(1.2f, 1.0f, 2.0f);
